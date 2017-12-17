@@ -1,0 +1,20 @@
+{
+  "name": "rc_using_rpi_in_nodejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.16.2",
+    "http": "0.0.0",
+    "http-server": "^0.10.0",
+    "nipplejs": "^0.6.7",
+    "socket.io": "^2.0.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Ateeq Ahmed. K. A.",
+  "license": "ISC"
+}
