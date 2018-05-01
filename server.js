@@ -23,7 +23,7 @@ io.sockets.on('connection',function (socket) {
 
         if(previous == '' || (previous != data['action'] || previous == 'end')) {
             console.log('Received Data : ' + data['action']);
-            myApp.main(data['action']);
+            myApp.main(data['action'], io);
         }
 
         previous = data['action'];

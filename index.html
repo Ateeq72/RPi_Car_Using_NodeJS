@@ -51,6 +51,12 @@
             width: 50%;
             background: rgba(0, 0, 255, 0.1);
         }
+        #showResponse {
+            position: absolute;
+            bottom: 0;
+            padding-left: 250px;
+            z-index: 30;
+        }
     </style>
     <title>RPi RC</title>
 </head>
@@ -77,15 +83,12 @@
         size: 200
     });
     console.log(joystickR);
-    function response(val) {
-        $('#showResponse').val("Test Placement :"+val);
-    }
     function bindNippleL () {
         joystickL.on('start end', function (evt, data) {
             var dataToSend = {};
-            dataToSend['action'] = evt.type;
+            dataToSend['action'] = 'acc_' + evt.type;
             socket.emit('send command', dataToSend);
-            //console.log(data);
+            console.log(data);
         }).on('move', function (evt, data) {
             //console.log(data);
         }).on('dir:up dir:down ',
@@ -94,7 +97,6 @@
                 dataToSend['action'] = data.direction.y;
                 socket.emit('send command', dataToSend);
                 console.log('LJS : '+evt.type);
-                response(evt.type);
             }
         ).on('pressure', function (evt, data) {
             //console.log(data);
@@ -103,9 +105,9 @@
     function bindNippleR () {
         joystickR.on('start end', function (evt, data) {
             var dataToSend = {};
-            dataToSend['action'] = evt.type;
+            dataToSend['action'] = 'steer_' + evt.type;
             socket.emit('send command', dataToSend);
-            // console.log(data);
+            console.log(data);
         }).on('move', function (evt, data) {
             // console.log(data);
         }).on('dir:left dir:right',
@@ -113,13 +115,18 @@
                 var dataToSend = {};
                 dataToSend['action'] = data.direction.x;
                 socket.emit('send command', dataToSend);
-                console.log('RJS : '+evt.type);
-                response(evt.type);
+                console.log('RJS : '+evt.type);        
             }
         ).on('pressure', function (evt, data) {
             //console.log(data);
         });
     }
+
+    socket.on('pir',function (e){
+
+            $('#showResponse').html(e.data);
+    });
+
     bindNippleL();
     bindNippleR();
 </script>
