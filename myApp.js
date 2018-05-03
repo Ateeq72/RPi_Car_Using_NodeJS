@@ -11,6 +11,8 @@ var steerEN = 22;
 
 var pirSensor = 21;
 
+var socket;
+
 gpio.setMode('mode_bcm');
 
 gpio.destroy(function () {
@@ -26,12 +28,12 @@ gpio.setup(steerP2, gpio.DIR_OUT);
 gpio.on('change', function(channel, value) {
 
     if(value){
-        io.emit('pir',function () {
+        socket.emit('pir',function () {
             return {data : 'person detected'};
         });
     }
     else{
-        io.emit('pir',function () {
+        socket.emit('pir',function () {
             return {data : 'we are clear!'};
         });
     }
@@ -92,6 +94,11 @@ module.exports = {
             default:               
                 break;
         }
+    },
+
+    setIoVar : function (socket){
+
+        socket = socket;        
     },
 
     fwd : function(){

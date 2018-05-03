@@ -19,11 +19,13 @@ app.get('/',function (req, res) {
 io.sockets.on('connection',function (socket) {
     console.log('Connected!');
 
+    myApp.setIoVar(socket);
+
     socket.on('send command',function (data) {
 
         if(previous == '' || (previous != data['action'] || previous == 'end')) {
             console.log('Received Data : ' + data['action']);
-            myApp.main(data['action'], io);
+            myApp.main(data['action']);
         }
 
         previous = data['action'];
