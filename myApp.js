@@ -1,184 +1,197 @@
-var gpio = require('rpi-gpio');
-var exec = require('child_process').exec;
+var myApp = function (){
 
-var accP1 = 23;
-var accP2 = 24;
-var accEN = 25;
+        this.gpio = require('rpi-gpio');
+        this.exec = require('child_process').exec;
+        this.accP1 = 23;
+        this.accP2 = 24;
+        this.accEN = 25;
+        this.steerP1 = 17;
+        this.steerP2 = 27;
+        this.steerEN = 22;
+        this.pirSensor = 21;
 
-var steerP1 = 17;
-var steerP2 = 27;
-var steerEN = 22;
-
-var pirSensor = 21;
-
-var socket;
-
-gpio.setMode('mode_bcm');
-
-gpio.destroy(function () {
-    console.log('cleaned up gpio');
-});
-
-gpio.setup(accP1, gpio.DIR_OUT);
-gpio.setup(accP2, gpio.DIR_OUT);
-
-gpio.setup(steerP1, gpio.DIR_OUT);
-gpio.setup(steerP2, gpio.DIR_OUT);
-
-gpio.on('change', function(channel, value) {
-
-    if(value){
-        socket.emit('pir',function () {
-            return {data : 'person detected'};
-        });
-    }
-    else{
-        socket.emit('pir',function () {
-            return {data : 'we are clear!'};
-        });
-    }
-
-    console.log('Channel ' + channel + ' value is now ' + value);
-});
-
-gpio.setup(pirSensor, gpio.DIR_IN, gpio.EDGE_BOTH);
-
-gpio.setup(accEN, gpio.DIR_OUT,function () {
-    gpio.write(accEN, true, function(err) {
-        if (err) throw err;
-        console.log('Enabled Acc');
-    });
-});
-gpio.setup(steerEN, gpio.DIR_OUT, function () {
-    gpio.write(steerEN, true, function(err) {
-        if (err) throw err;
-        console.log('Enabled Steer');
-    });
-});
-
-// exec('echo "Hello world" | festival --tts', function(code, stdout, stderr) {
-//     console.log('Exit code:', code);
-//     console.log('Program output:', stdout);
-//     console.log('Program stderr:', stderr);
-// });
-
-module.exports = {
-
-    main : function (data, io) {
-
-        switch (data){
-            case 'up' :
-                this.fwd();
-                break;
-
-            case 'down' :
-                this.revr();
-                break;
-
-            case 'left' :
-                this.left();
-                break;
-
-            case 'right' :
-                this.right();
-                break;
-
-            case 'acc_end' :
-                this.acc_end();
-                break;
-
-            case 'steer_end' :
-                this.steer_end();
-                break;
-
-            default:               
-                break;
+        this.setSocketVar = function (socket) {
+            this.socket = socket;
         }
-    },
 
-    setIoVar : function (socket){
+        this.initialize = function () {
+            
+            var _this = this;
+            this.gpio.setMode('mode_bcm');
 
-        socket = socket;        
-    },
+            this.gpio.destroy(function () {
+                console.log('cleaned up gpio');
+            });
 
-    fwd : function(){
-        console.log('Forward!!');
+            this.gpio.setup(this.accP1, this.gpio.DIR_OUT);
+            this.gpio.setup(this.accP2, this.gpio.DIR_OUT);
+            this.gpio.setup(this.steerP1, this.gpio.DIR_OUT);
+            this.gpio.setup(this.steerP2, this.gpio.DIR_OUT);
 
-        gpio.write(accP1, true, function(err) {
-            if (err) throw err;
-            console.log('Written to pin');
-        });
-        gpio.write(accP2, false, function(err) {
-            if (err) throw err;
-            console.log('Written to pin');
-        });
+            this.gpio.setup(this.pirSensor, this.gpio.DIR_IN, this.gpio.EDGE_BOTH);
 
-        
-    },
+            this.gpio.setup(this.accEN, this.gpio.DIR_OUT, function () {
 
-    revr : function () {
-        console.log('Reverse!!');
+                _this.gpio.write(_this.accEN, true, function (err) {
+                    if (err)
+                        throw err;
+                    console.log('Enabled Acc');
+                });
+            });
 
-        gpio.write(accP1, false, function(err) {
-            if (err) throw err;
-            console.log('Written to pin');
-        });
-        gpio.write(accP2, true, function(err) {
-            if (err) throw err;
-            console.log('Written to pin');
-        });
-    },
+            this.gpio.setup(this.steerEN, this.gpio.DIR_OUT, function () {
 
-    left : function () {
-        console.log('Left!!');
+                _this.gpio.write(_this.steerEN, true, function (err) {
+                    if (err)
+                        throw err;
+                    console.log('Enabled Steer');
+                });
+            });
+        }
 
-        gpio.write(steerP1, true, function(err) {
-            if (err) throw err;
-            console.log('Written to pin');
-        });
-        gpio.write(steerP2, false, function(err) {
-            if (err) throw err;
-            console.log('Written to pin');
-        });
-    },
+        this.registerPIREvents = function () {
 
-    right : function () {
-        console.log('Right!!');
+            var _this = this;
 
-        gpio.write(steerP1, false, function(err) {
-            if (err) throw err;
-            console.log('Written to pin');
-        });
-        gpio.write(steerP2, true, function(err) {
-            if (err) throw err;
-            console.log('Written to pin');
-        });
-    },
+            this.gpio.on('change', function (channel, value) {
+                if(value){
 
-    acc_end : function () {
-        console.log('End Acc!!');
+                    _this.acc_end();
+                    _this.socket.emit('pir',{data : 'Person Detected'});
+                }
+                else{
 
-        gpio.write(accP1, false, function(err) {
-            if (err) throw err;
-            console.log('Written to pin');
-        });
-        gpio.write(accP2, false, function(err) {
-            if (err) throw err;
-            console.log('Written to pin');
-        });        
-    },
+                    _this.socket.emit('pir',{data : 'We are Clear!'});
+                }
 
-    steer_end : function () {
-        console.log('End Steer!!');
+                console.log('Channel ' + channel + ' value is now ' + value);
+            });
+        }
 
-        gpio.write(steerP1, false, function(err) {
-            if (err) throw err;
-            console.log('Written to pin');
-        });
-        gpio.write(steerP2, false, function(err) {
-            if (err) throw err;
-            console.log('Written to pin');
-        });
+        // exec('echo "Hello world" | festival --tts', function(code, stdout, stderr) {
+        //     console.log('Exit code:', code);
+        //     console.log('Program output:', stdout);
+        //     console.log('Program stderr:', stderr);
+        // });
 
+        this.fwd = function () {
+
+            console.log('Forward!!');
+
+            this.gpio.write(this.accP1, true, function (err) {
+                if (err)
+                    throw err;
+                console.log('Written to pin');
+            });
+
+            this.gpio.write(this.accP2, false, function (err) {
+                if (err)
+                    throw err;
+                console.log('Written to pin');
+            });
+            
+        }
+
+        this.revr = function () {
+
+            console.log('Reverse!!');
+
+            this.gpio.write(this.accP1, false, function (err) {
+                if (err)
+                    throw err;
+                console.log('Written to pin');
+            });
+            this.gpio.write(this.accP2, true, function (err) {
+                if (err)
+                    throw err;
+                console.log('Written to pin');
+            });
+        }
+
+        this.left = function () {
+            console.log('Left!!');
+            this.gpio.write(this.steerP1, true, function (err) {
+                if (err)
+                    throw err;
+                console.log('Written to pin');
+            });
+            this.gpio.write(this.steerP2, false, function (err) {
+                if (err)
+                    throw err;
+                console.log('Written to pin');
+            });
+        }
+
+        this.right = function () {
+            console.log('Right!!');
+            this.gpio.write(this.steerP1, false, function (err) {
+                if (err)
+                    throw err;
+                console.log('Written to pin');
+            });
+            this.gpio.write(this.steerP2, true, function (err) {
+                if (err)
+                    throw err;
+                console.log('Written to pin');
+            });
+        }
+
+        this.acc_end = function () {
+            console.log('End Acc!!');
+            this.gpio.write(this.accP1, false, function (err) {
+                if (err)
+                    throw err;
+                console.log('Written to pin');
+            });
+            this.gpio.write(this.accP2, false, function (err) {
+                if (err)
+                    throw err;
+                console.log('Written to pin');
+            });
+        }
+
+        this.steer_end = function () {
+
+            console.log('End Steer!!');
+            this.gpio.write(this.steerP1, false, function (err) {
+                if (err)
+                    throw err;
+                console.log('Written to pin');
+            });
+            this.gpio.write(this.steerP2, false, function (err) {
+                if (err)
+                    throw err;
+                console.log('Written to pin');
+            });
+
+        }
+
+        this.main = function (data) {
+            
+            switch (data) {
+                case 'up':
+                    this.fwd();
+                    break;
+                case 'down':
+                    this.revr();
+                    break;
+                case 'left':
+                    this.left();
+                    break;
+                case 'right':
+                    this.right();
+                    break;
+                case 'acc_end':
+                    this.acc_end();
+                    break;
+                case 'steer_end':
+                    this.steer_end();
+                    break;
+                default:
+                    break;
+            }
+        };
     }
-};
+
+module.exports = myApp;
+

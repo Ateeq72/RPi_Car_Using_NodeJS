@@ -16,16 +16,21 @@ app.get('/',function (req, res) {
 
 });
 
+
+var myAppClass = new myApp();
+myAppClass.initialize();
+myAppClass.registerPIREvents();
+
 io.sockets.on('connection',function (socket) {
     console.log('Connected!');
 
-    myApp.setIoVar(socket);
+    myAppClass.setSocketVar(socket);
 
     socket.on('send command',function (data) {
 
         if(previous == '' || (previous != data['action'] || previous == 'end')) {
             console.log('Received Data : ' + data['action']);
-            myApp.main(data['action']);
+            myAppClass.main(data['action']);
         }
 
         previous = data['action'];

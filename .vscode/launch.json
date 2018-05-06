@@ -8,7 +8,17 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
+            "address": "192.168.1.10",
             "program": "${workspaceFolder}/server.js"
-        }
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Attach",
+            "address": "192.168.1.10",
+            "port": 42499,
+            "localRoot": "${workspaceRoot}",
+            "remoteRoot": "/home/osmc/RPi_Car_Using_NodeJS"
+          }
     ]
 }

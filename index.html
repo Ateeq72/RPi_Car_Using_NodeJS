@@ -53,9 +53,10 @@
         }
         #showResponse {
             position: absolute;
-            bottom: 0;
-            padding-left: 250px;
+            width: 100%;
             z-index: 30;
+            font-size: 30px;
+            text-align: center;
         }
     </style>
     <title>RPi RC</title>
@@ -65,7 +66,7 @@
     <div id="left"></div>
     <div id="right"></div>
 </div>
-<div id="showResponse"></div>
+<div id="showResponse">  PIR Data</div>
 <script>
     var joystickL = nipplejs.create({
         zone: document.getElementById('left'),
@@ -122,9 +123,9 @@
         });
     }
 
-    socket.on('pir',function (e){
+    socket.on('pir',function (data){
 
-            $('#showResponse').html(e.data);
+            $('#showResponse').html(data.data);
     });
 
     bindNippleL();

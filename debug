@@ -1,0 +1,1 @@
+sudo node --inspect-brk=192.168.1.10:42499 server.js
