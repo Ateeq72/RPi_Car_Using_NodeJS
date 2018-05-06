@@ -1,0 +1,2 @@
+node js/websocket-relay.js ateeq
+ffmpeg -s 640x480 -f video4linux2 -i /dev/video0 -f mpeg1video -b 800k -r 30 http://192.168.1.10:8081/ateeq/640/480/
