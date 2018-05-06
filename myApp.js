@@ -57,11 +57,11 @@ var myApp = function (){
                 if(value){
 
                     _this.acc_end();
-                    _this.socket.emit('pir',{data : 'Person Detected'});
+                    _this.socket.emit('pir','Person Detected');
                 }
                 else{
 
-                    _this.socket.emit('pir',{data : 'We are Clear!'});
+                    _this.socket.emit('pir', 'We are Clear!');
                 }
 
                 console.log('Channel ' + channel + ' value is now ' + value);
@@ -190,7 +190,7 @@ var myApp = function (){
                 default:
                     break;
             }
-        };
+        }
     }
 
 module.exports = myApp;

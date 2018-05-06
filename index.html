@@ -3,12 +3,13 @@
 <head>
     <script src="/js/jquery-3.2.1.min.js"></script>
     <script src="/js/socket.io.slim.js"></script>
+    <script type="text/javascript" src="/js/jsmpeg.min.js"></script>
     <script>
         var socket = io();
     </script>
     <script src="/js/nipplejs.min.js"></script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=0.5">
+    <meta name="viewport" content="width=device-width, initial-scale=0, maximum-scale=0">
     <style>
         html, body {
             position: absolute;
@@ -35,33 +36,25 @@
             width: 50%;
             background: rgba(0, 0, 255, 0.1);
         }
-        #debugR {
-            position: absolute;
-            right: 0;
-            top: 0;
-            height: 100%;
-            width: 50%;
-            background: rgba(0, 0, 255, 0.1);
-        }
-        #debugL {
-            position: absolute;
-            right: 0;
-            top: 0;
-            height: 100%;
-            width: 50%;
-            background: rgba(0, 0, 255, 0.1);
-        }
         #showResponse {
             position: absolute;
             width: 100%;
             z-index: 30;
             font-size: 30px;
             text-align: center;
+            background: white;
+        }
+        #video-canvas {
+            width: 100%;
+            position: absolute;
+            z-index: -10;
+            align-content: center;
         }
     </style>
     <title>RPi RC</title>
 </head>
 <body>
+<canvas id="video-canvas"></canvas>    
 <div id="controller">
     <div id="left"></div>
     <div id="right"></div>
@@ -125,11 +118,19 @@
 
     socket.on('pir',function (data){
 
-            $('#showResponse').html(data.data);
+            $('#showResponse').html(data);
     });
+
+    function streamVideo(){
+        var canvas = document.getElementById('video-canvas');
+		var url = 'ws://'+document.location.hostname+':8082/';
+		var player = new JSMpeg.Player(url, {canvas: canvas});
+    }
 
     bindNippleL();
     bindNippleR();
+    streamVideo();
+
 </script>
 </body>
 </html>

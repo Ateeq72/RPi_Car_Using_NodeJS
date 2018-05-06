@@ -1,7 +1,4 @@
-var express = require('express');
-var app = express();
-var server = require('http').createServer(app);
-var io = require('socket.io').listen(server);
+var express = require('express'), app = express(), server = require('http').createServer(app), io = require('socket.io').listen(server);
 var myApp = require('./myApp.js');
 
 var port = 8777;
@@ -10,14 +7,8 @@ var previous = '';
 server.listen(port);
 console.log('Started at port : ' + port);
 
-app.get('/',function (req, res) {
-
-    res.sendFile(__dirname + '/index.html');
-
-});
-
-
 var myAppClass = new myApp();
+
 myAppClass.initialize();
 myAppClass.registerPIREvents();
 
@@ -38,6 +29,15 @@ io.sockets.on('connection',function (socket) {
     });
 });
 
+
+// Routes and static files
+
+app.get('/',function (req, res) {
+
+    res.sendFile(__dirname + '/index.html');
+
+});
+
 app.get('/js/jquery-3.2.1.min.js',function (req, res) {
 
     res.sendFile(__dirname + '/js/jquery-3.2.1.min.js');
@@ -47,6 +47,12 @@ app.get('/js/jquery-3.2.1.min.js',function (req, res) {
 app.get('/js/socket.io.slim.js',function (req, res) {
 
     res.sendFile(__dirname + '/js/socket.io.slim.js');
+
+});
+
+app.get('/js/jsmpeg.min.js',function (req, res) {
+
+    res.sendFile(__dirname + '/js/jsmpeg.min.js');
 
 });
 
