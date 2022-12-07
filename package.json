@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "dependencies": {
-    "express": "^4.16.3",
+    "express": "^4.17.3",
     "http": "0.0.0",
     "http-server": "^0.10.0",
     "nipplejs": "^0.6.7",
